@@ -2,10 +2,10 @@
 //               █      █                                                     //
 //               ████████                                                     //
 //             ██        ██                                                   //
-//            ███  █  █  ███        bootstrap.cpp                             //
+//            ███  █  █  ███        ResourcesManager.cs                       //
 //            █ █        █ █        Game_BowAndArrow                          //
 //             ████████████                                                   //
-//           █              █       Copyright (c) 2016                        //
+//           █              █       Copyright (c) 2016, 2017                  //
 //          █     █    █     █      AmazingCow - www.AmazingCow.com           //
 //          █     █    █     █                                                //
 //           █              █       N2OMatt - n2omatt@amazingcow.com          //
@@ -38,44 +38,104 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 
-////////////////////////////////////////////////////////////////////////////////
-// This file is intended to start the game.                                   //
-// It is needed because Linux has a hard time with C# apps                    //
-// so, with this we start in terminal or with the desktop entry.              //
-////////////////////////////////////////////////////////////////////////////////
-#include <iostream>
-#include <cstdlib>
-#include <string>
-
-constexpr auto kMono_Cmd        = "mono ";
-constexpr auto kUSR_Dir         = " /usr/local/share/amazingcow_game_bow_and_arrow/";
-constexpr auto kGame_Executable = "com.amazingcow.BowAndArrow.exe";
+#region Usings
+//System
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Diagnostics;
+//XNA
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+#endregion //Usings
 
 
-int main()
+namespace com.amazingcow.BowAndArrow
 {
-    //COWTODO: We hard code the paths here... While this matches the \
-    //         paths in Makefile it's fragile and we must change to  \
-    //         a more robust approach soon as possible.
-    std::string usr_cmd(
-        std::string(kMono_Cmd) + //Need that becuase c++ don't know
-        kUSR_Dir               + //how concat char * directly.
-        kGame_Executable
-    );
-
-
-    std::cout << "Using: " << usr_cmd << std::endl;
-    if(system(usr_cmd.c_str()) != 0)
+    public class ResourcesManager
     {
-        std::string local_cmd(
-            std::string(kMono_Cmd) +
-            kGame_Executable
-        );
-        std::cout << "Using: " << local_cmd << std::endl;
+        #region iVars
+        ContentManager _contentManager;
 
-        if(system(local_cmd.c_str()) != 0)
+        Dictionary<String, Texture2D>  _texturesDict;
+        Dictionary<String, SpriteFont> _fontsDict;
+        #endregion
+
+
+        #region Singleton
+        private static ResourcesManager s_instance;
+        public static ResourcesManager Instance
         {
-            std::cout << "Cannot find the game" << std::endl;
+            get
+            {
+                if(s_instance == null)
+                    s_instance = new ResourcesManager();
+                return s_instance;
+            }
         }
+        #endregion //Singleton
+
+
+        #region Static Methods
+        public static String FindContentDirectoryPath()
+        {
+            //Init the search paths.
+            var pathsList = new List<String> () {
+                Path.Combine(Environment.CurrentDirectory, "Content/bin/DesktopGL/Content"),
+                "/usr/local/share/amazingcow_game_bow_and_arrow/Content"
+            };
+
+            //Select the first avaiable path.
+            foreach (var searchPath in pathsList)
+            {
+                if (Directory.Exists(searchPath))
+                {
+                    Debug.WriteLine("Select Asset Search Path: " + searchPath);
+                    return searchPath;
+                }
+            }
+
+            Debug.Assert(false, "Couldn't find the path...");
+            return null;
+        }
+        #endregion //Static Methods
+
+
+        #region CTOR
+        private ResourcesManager()
+        {
+            //Empty...
+            _contentManager = GameManager.Instance.Content;
+
+            _texturesDict = new Dictionary<String, Texture2D >();
+            _fontsDict    = new Dictionary<String, SpriteFont>();
+        }
+        #endregion //CTOR
+
+
+        #region Public Methods
+        public Texture2D GetTexture(String name)
+        {
+            if(_texturesDict.ContainsKey(name))
+                return _texturesDict[name];
+
+            var texture = _contentManager.Load<Texture2D>("sprites/" + name);
+            _texturesDict.Add(name, texture);
+
+            return texture;
+        }
+
+        public SpriteFont GetFont(String name)
+        {
+            if(_fontsDict.ContainsKey(name))
+                return _fontsDict[name];
+
+            var font = _contentManager.Load<SpriteFont>("fonts/" + name);
+            _fontsDict.Add(name, font);
+
+            return font;
+        }
+        #endregion //Public Methods
     }
 }
+

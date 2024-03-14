@@ -112,8 +112,8 @@ namespace com.amazingcow.BowAndArrow
             //COWTODO: In the next version let the user select \
             //         the screen resolution.
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth  = 640;
-            _graphics.PreferredBackBufferHeight = 480;
+            _graphics.PreferredBackBufferWidth  = 800;
+            _graphics.PreferredBackBufferHeight = 600;
 
             //Set the Window Caption.
             Window.Title = String.Format(
@@ -266,4 +266,3 @@ namespace com.amazingcow.BowAndArrow
         #endregion //FileSystem
     }
 }
-

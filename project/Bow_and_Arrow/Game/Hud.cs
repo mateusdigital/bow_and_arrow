@@ -54,6 +54,7 @@ namespace com.amazingcow.BowAndArrow
         #region Constants
         const int kPaddingToBackground = 6;
         const int kBackgroundHeight    = 46;
+        private const int GAP = 3;
         #endregion //Constants
 
 
@@ -97,7 +98,7 @@ namespace com.amazingcow.BowAndArrow
             _littleArrowTexture   = resMgr.GetTexture("little_arrow");
 
             //Init the Sprite Fonts.
-            _spriteFont = resMgr.GetFont("arial");
+            _spriteFont = resMgr.GetFont("JetBrainsMono");
         }
         #endregion //CTOR
 
@@ -139,22 +140,25 @@ namespace com.amazingcow.BowAndArrow
         void DrawBackground(SpriteBatch sb)
         {
             //Left
-            sb.Draw(_hudLeft, new Vector2(BoundingBox.Left, BoundingBox.Top));
+            sb.Draw(_hudLeft, new Vector2(BoundingBox.Left, BoundingBox.Top), Color.White);
+            
             //Center
-            sb.Draw(_hudCenter,
-                    new Vector2(_hudLeft.Width, BoundingBox.Top),
-                    null,
-                    null,
-                    null,
-                    0,
-                    new Vector2(BoundingBox.Width - _hudRight.Width, 1),
-                    null,
-                    SpriteEffects.None,
-                    0);
+            sb.Draw(
+                _hudCenter, 
+                new Vector2(_hudLeft.Width, BoundingBox.Top), 
+                null, 
+                Color.White, 
+                0, 
+                new Vector2(0,0),
+                new Vector2(BoundingBox.Width - _hudRight.Width, 1), 
+                SpriteEffects.None, 
+                0);
+            
             //Right
             sb.Draw(_hudRight,
                      new Vector2(BoundingBox.Right - _hudRight.Width,
-                                 BoundingBox.Top));
+                                 BoundingBox.Top),
+                     Color.White);
         }
         #endregion //Draw Background
 
@@ -188,7 +192,7 @@ namespace com.amazingcow.BowAndArrow
             var desc = "Press [Enter] to Play!";
             var size = _spriteFont.MeasureString(desc);
             var pos  =  new Vector2(BoundingBox.Center.X - (size.X / 2),
-                                    BoundingBox.Bottom - size.Y - kPaddingToBackground);
+                                    BoundingBox.Bottom - size.Y - kPaddingToBackground + GAP);
 
             sb.DrawString(_spriteFont, desc, pos, Color.Black);
         }
@@ -198,7 +202,7 @@ namespace com.amazingcow.BowAndArrow
             var desc = "PAUSED - Press [Space] to Resume!";
             var size = _spriteFont.MeasureString(desc);
             var pos  =  new Vector2(BoundingBox.Center.X - (size.X / 2),
-                                    BoundingBox.Bottom - size.Y - kPaddingToBackground);
+                                    BoundingBox.Bottom - size.Y - kPaddingToBackground + GAP);
 
             sb.DrawString(_spriteFont, desc, pos, Color.Black);
         }
@@ -208,7 +212,7 @@ namespace com.amazingcow.BowAndArrow
             var desc = "GAME OVER - Press [Enter] to Start Again!";
             var size = _spriteFont.MeasureString(desc);
             var pos  =  new Vector2(BoundingBox.Center.X - (size.X / 2),
-                                    BoundingBox.Bottom - size.Y - kPaddingToBackground);
+                                    BoundingBox.Bottom - size.Y - kPaddingToBackground + GAP);
 
             sb.DrawString(_spriteFont, desc, pos, Color.Black);
         }
@@ -234,7 +238,7 @@ namespace com.amazingcow.BowAndArrow
 
             var size  = _spriteFont.MeasureString(score);
             var pos   = new Vector2(BoundingBox.Left   + kPaddingToBackground,
-                                    BoundingBox.Bottom - kPaddingToBackground - size.Y);
+                                    BoundingBox.Bottom - kPaddingToBackground - size.Y + GAP);
 
             sb.DrawString(_spriteFont, score, pos, Color.Black);
         }
